@@ -19,20 +19,20 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.codehaus.plexus.util.FileUtils;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.metadata.Metadata;
-import org.sonatype.aether.repository.LocalArtifactRegistration;
-import org.sonatype.aether.repository.LocalArtifactRequest;
-import org.sonatype.aether.repository.LocalArtifactResult;
-import org.sonatype.aether.repository.LocalMetadataRegistration;
-import org.sonatype.aether.repository.LocalMetadataRequest;
-import org.sonatype.aether.repository.LocalMetadataResult;
-import org.sonatype.aether.repository.LocalRepository;
-import org.sonatype.aether.repository.LocalRepositoryManager;
-import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.spi.log.Logger;
-import org.sonatype.aether.spi.log.NullLogger;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.metadata.Metadata;
+import org.eclipse.aether.repository.LocalArtifactRegistration;
+import org.eclipse.aether.repository.LocalArtifactRequest;
+import org.eclipse.aether.repository.LocalArtifactResult;
+import org.eclipse.aether.repository.LocalMetadataRegistration;
+import org.eclipse.aether.repository.LocalMetadataRequest;
+import org.eclipse.aether.repository.LocalMetadataResult;
+import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.LocalRepositoryManager;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  */
@@ -52,7 +52,7 @@ class SplitLocalRepositoryManager
 
     private TrackingFileManager trackingFileManager;
 
-    private Logger logger = NullLogger.INSTANCE;
+    private Logger logger = LoggerFactory.getLogger(SplitLocalRepositoryManager.class);
 
     public SplitLocalRepositoryManager( File basedir )
     {
@@ -62,13 +62,6 @@ class SplitLocalRepositoryManager
         }
         repository = new LocalRepository( basedir.getAbsoluteFile(), "splitted" );
         trackingFileManager = new TrackingFileManager();
-    }
-
-    public SplitLocalRepositoryManager setLogger( Logger logger )
-    {
-        this.logger = ( logger != null ) ? logger : NullLogger.INSTANCE;
-        trackingFileManager.setLogger( logger );
-        return this;
     }
 
     public LocalRepository getRepository()

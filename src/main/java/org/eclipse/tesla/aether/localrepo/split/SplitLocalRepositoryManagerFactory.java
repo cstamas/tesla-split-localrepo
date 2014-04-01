@@ -8,55 +8,48 @@ package org.eclipse.tesla.aether.localrepo.split;
  *   http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
-import org.sonatype.aether.repository.LocalRepository;
-import org.sonatype.aether.repository.LocalRepositoryManager;
-import org.sonatype.aether.repository.NoLocalRepositoryManagerException;
-import org.sonatype.aether.spi.localrepo.LocalRepositoryManagerFactory;
-import org.sonatype.aether.spi.locator.Service;
-import org.sonatype.aether.spi.locator.ServiceLocator;
-import org.sonatype.aether.spi.log.Logger;
-import org.sonatype.aether.spi.log.NullLogger;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.LocalRepositoryManager;
+import org.eclipse.aether.repository.NoLocalRepositoryManagerException;
+import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
+import org.eclipse.aether.spi.locator.Service;
+import org.eclipse.aether.spi.locator.ServiceLocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates local repository managers for the local repository types {@code "split"} and {@code ""} (automatic).
  */
-@Component( role = LocalRepositoryManagerFactory.class, hint = "split" )
+@Singleton
+@Named("split")
 public class SplitLocalRepositoryManagerFactory
     implements LocalRepositoryManagerFactory, Service
 {
 
-    @Requirement
-    private Logger logger = NullLogger.INSTANCE;
+  @Inject
+  private Logger logger = LoggerFactory.getLogger(SplitLocalRepositoryManagerFactory.class);
 
-    public LocalRepositoryManager newInstance( LocalRepository repository )
-        throws NoLocalRepositoryManagerException
-    {
-        if ( "".equals( repository.getContentType() ) || "split".equals( repository.getContentType() ) )
-        {
-            return new SplitLocalRepositoryManager( repository.getBasedir() ).setLogger( logger );
-        }
-        else
-        {
-            throw new NoLocalRepositoryManagerException( repository );
-        }
+  public LocalRepositoryManager newInstance(final RepositorySystemSession session, final LocalRepository repository)
+      throws NoLocalRepositoryManagerException
+  {
+    if ("".equals(repository.getContentType()) || "split".equals(repository.getContentType())) {
+      return new SplitLocalRepositoryManager(repository.getBasedir());
     }
+    else {
+      throw new NoLocalRepositoryManagerException(repository);
+    }
+  }
 
-    public void initService( ServiceLocator locator )
-    {
-        setLogger( locator.getService( Logger.class ) );
-    }
+  public void initService(ServiceLocator locator) {
+  }
 
-    public SplitLocalRepositoryManagerFactory setLogger( Logger logger )
-    {
-        this.logger = ( logger != null ) ? logger : NullLogger.INSTANCE;
-        return this;
-    }
-
-    public int getPriority()
-    {
-        return 50;
-    }
+  public float getPriority() {
+    return 50;
+  }
 
 }
